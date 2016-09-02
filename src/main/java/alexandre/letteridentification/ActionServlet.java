@@ -5,6 +5,7 @@
  */
 package alexandre.letteridentification;
 
+import alexandre.letteridentification.service.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(urlPatterns = {"/ActionServlet"})
 public class ActionServlet extends HttpServlet {
     
+    public static String path = "C:\\Users\\alexa\\OneDrive\\Documents\\NetBeansProjects\\LetterIdentificationServer\\src\\main\\webapp";
+    
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
@@ -28,85 +31,41 @@ public class ActionServlet extends HttpServlet {
         
         String todo = request.getParameter("action");
 
-        ServiceMetier servM = new ServiceMetier();
+        Service serv = new Service();
         PrintWriter out = response.getWriter();
         response.setCharacterEncoding("UTF-8");
         
         
-        System.out.println("Action !");
-        
-        if (request.getSession(false) == null && !request.getParameter("action").equals("connexion"))
+        System.out.println("Action!");
+
+        switch(todo)
         {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-        else
-        {
-            switch(todo)
-            {
-                case "infos" :
-                    System.out.println("Action d'infos !");
-                    ActionInfos acInfos = new ActionInfos();
-                    acInfos.setServices(servM);
-                    acInfos.execute(request, out);
-
-                    break;
-
-                case "modification" :
-                    System.out.println("Action de modification !");
-                    ActionModification acModif = new ActionModification();
-                    acModif.setServices(servM);
-                    acModif.execute(request, out);
-
-                    break;
-
-                case "liste" :
-                    System.out.println("Action de listing !");
-                    ActionListe acListe = new ActionListe();
-                    acListe.setServices(servM);
-                    acListe.execute(request, out);
-
-                    break;
-
-                case "creation" :
-                    System.out.println("Action de création !");
-                    ActionCreation acCreation = new ActionCreation();
-                    acCreation.setServices(servM);
-                    acCreation.execute(request, out);
-
-                    break;
-
-                case "notation" :
-                    System.out.println("Action de notation !");
-                    ActionNotation acNotation = new ActionNotation();
-                    acNotation.setServices(servM);
-                    acNotation.execute(request, out);
-
-                    break;
-
-                case "suppression" :
-                    System.out.println("Action de suppression !");
-                    ActionSuppression acSuppression = new ActionSuppression();
-                    acSuppression.setServices(servM);
-                    acSuppression.execute(request, out);
-
-                    break;
-
-                case "connexion" :
-                    System.out.println("Action de connexion !");
-                    ActionConnexion acConnexion = new ActionConnexion();
-                    acConnexion.setServices(servM);
-                    acConnexion.execute(request, out);
-
-                    break;
-
-                case "deconnexion" :
-                    System.out.println("Action de déconnexion !");
-                    ActionDeconnexion acDeconnexion = new ActionDeconnexion();
-                    acDeconnexion.setServices(servM);
-                    acDeconnexion.execute(request, out);
-
-                    break;
-            }
+            case "training" :
+                System.out.println("Training action!");
+                
+                TrainingAction acTraining = new TrainingAction();
+                acTraining.setServices(serv);
+                acTraining.execute(request, out);
+                
+                break;
+                
+            case "upload" :
+                System.out.println("Upload action!");
+                
+                UploadAction acUpload = new UploadAction();
+                acUpload.setServices(serv);
+                acUpload.execute(request, out);
+                
+                break;
+                
+            case "test" :
+                System.out.println("Test action!");
+                
+                TestAction acTest = new TestAction();
+                acTest.setServices(serv);
+                acTest.execute(request, out);
+                
+                break;
         }
     }
     
