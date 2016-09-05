@@ -66,6 +66,15 @@ public class ActionServlet extends HttpServlet {
                 acTest.execute(request, out);
                 
                 break;
+                
+            case "list" :
+                System.out.println("List action!");
+                
+                ListAction acList = new ListAction();
+                acList.setServices(serv);
+                acList.execute(request, out);
+                
+                break;
         }
     }
     

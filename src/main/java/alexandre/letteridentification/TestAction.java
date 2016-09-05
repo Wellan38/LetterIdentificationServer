@@ -6,6 +6,8 @@
 package alexandre.letteridentification;
 
 import alexandre.letteridentification.util.NeuralNetwork;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -50,9 +54,9 @@ public class TestAction extends Action
             {
                 Character letter = (char)i;
                 res.put(letter, Double.valueOf((int)((serv.testNetwork(letter, input)) * 10000)) / 100);
-                System.out.println(letter + " : " + res.get(letter) + "%");
+                //System.out.println(letter + " : " + res.get(letter) + "%");
             }
-            
+            /*
             for (int i = 0; i < Math.sqrt(NeuralNetwork.NB_INPUT); i++)
             {
                 for (int j = 0; j < Math.sqrt(NeuralNetwork.NB_INPUT); j++)
@@ -69,7 +73,47 @@ public class TestAction extends Action
                 
                 System.out.println();
             }            
+            */
             
+            JsonArray results = new JsonArray();
+            
+            for (Character l : res.keySet())
+            {
+                JsonObject el = new JsonObject();
+                el.addProperty("letter", l);
+                el.addProperty("value", res.get(l));
+                
+                results.add(el);
+            }
+            
+            JsonObject computer_vision = new JsonObject();
+            
+            JsonArray points = new JsonArray();
+            
+            for (int i = 0; i < Math.sqrt(NeuralNetwork.NB_INPUT); i++)
+            {
+                for (int j = 0; j < Math.sqrt(NeuralNetwork.NB_INPUT); j++)
+                {
+                    if (input[(int)(i * Math.sqrt(NeuralNetwork.NB_INPUT) + j)].equals(1.))
+                    {
+                        JsonObject p = new JsonObject();
+                        p.addProperty("x", i);
+                        p.addProperty("y", j);
+                        
+                        points.add(p);
+                    }
+                }
+            }
+            
+            computer_vision.add("points", points);
+            computer_vision.addProperty("dimension", (int)Math.sqrt(NeuralNetwork.NB_INPUT));
+            
+            JsonObject container = new JsonObject();
+            container.add("results", results);
+            container.add("computer_vision", computer_vision);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(container);
+            out.println(json);
         }
         catch (IOException ex)
         {

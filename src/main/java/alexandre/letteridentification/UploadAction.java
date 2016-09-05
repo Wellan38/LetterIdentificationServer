@@ -31,8 +31,9 @@ public class UploadAction extends Action
         {
             Character letter = request.getParameter("letter").charAt(0);
             String image_src = request.getParameter("image");
+            String image_computer = request.getParameter("image_computer");
 
-            String path = ActionServlet.path + "\\Training\\" + letter;
+            String path = ActionServlet.path + "\\Images to be analyzed\\" + letter + "\\Drawings";
             
             if (!new File(path).exists())
             {
@@ -46,6 +47,22 @@ public class UploadAction extends Action
 
             InputStream in = new ByteArrayInputStream(src);
             BufferedImage bImageFromConvert;
+
+            bImageFromConvert = ImageIO.read(in);
+            
+            ImageIO.write(bImageFromConvert, "PNG", new File(path + "\\" + index + ".png"));
+            
+            path = ActionServlet.path + "\\Images to be analyzed\\" + letter + "\\Computer Vision";
+            
+            if (!new File(path).exists())
+            {
+                new File(path).mkdirs();
+            }
+            index = new File(path).list().length + 1;
+
+            src = decoder.decode(image_computer);
+
+            in = new ByteArrayInputStream(src);
 
             bImageFromConvert = ImageIO.read(in);
             
